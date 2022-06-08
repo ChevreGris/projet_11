@@ -1,6 +1,9 @@
+import ipdb
+
 class TestAuth:
 
     def test_should_access_home(self, client):
+        #ipdb.set_trace()
         assert client.get('/').status_code == 200
 
     def test_should_redirect_known_email(self, client):
