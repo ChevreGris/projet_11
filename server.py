@@ -1,6 +1,6 @@
 import json
 from flask import Flask,render_template,request,redirect,flash,url_for
-
+import ipdb
 
 def loadClubs(clubs_json):
     with open(clubs_json) as c:
@@ -62,10 +62,10 @@ def create_app(config={}):
         placesRemaining = int(competition['numberOfPlaces'])
         if placesRequired > int(club['points']):
             flash(f"Cannot book - trying to book more than what you have.")
-            return render_template('booking.html',club=club, competition=competition)
+            return redirect(url_for('book', competition=competition['name'], club=club['name']))
         elif placesRequired > placesRemaining:
             flash(f"Cannot book - trying to book more than what remains.")
-            return render_template('booking.html',club=club, competition=competition)
+            return redirect(url_for('book', competition=competition['name'], club=club['name']))
         else:
             flash('Great-booking complete!')
             club['points'] = int(club['points']) - placesRequired
