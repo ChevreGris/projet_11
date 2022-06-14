@@ -13,6 +13,10 @@ def loadCompetitions():
          listOfCompetitions = json.load(comps)['competitions']
          return listOfCompetitions
 
+
+# TODO: Add route for points display
+
+
 def create_app(config):
     app = Flask(__name__)
     app.config.from_object(config)
@@ -20,15 +24,19 @@ def create_app(config):
     competitions = loadCompetitions()
     clubs = loadClubs()
 
-
     @app.route('/')
     def index():
         return render_template('index.html')
 
-    @app.route('/showSummary',methods=['POST'])
-    def showSummary():
-        club = [club for club in clubs if club['email'] == request.form['email']][0]
-        return render_template('welcome.html',club=club,competitions=competitions)
+
+    @app.route('/showSummary', methods=['POST'])
+    def show_summary():
+        try:
+            club = [club for club in clubs if club['email'] == request.form['email']][0]
+            return render_template('welcome.html', club=club, competitions=competitions)
+        except IndexError:
+            flash('Email was not found. Please try again.')
+            return redirect('/')
 
 
     @app.route('/book/<competition>/<club>')
@@ -52,9 +60,6 @@ def create_app(config):
         return render_template('welcome.html', club=club, competitions=competitions)
 
 
-    # TODO: Add route for points display
-
-
     @app.route('/logout')
     def logout():
         return redirect(url_for('index'))
@@ -64,4 +69,4 @@ def create_app(config):
 if __name__ == '__main__':
     app = create_app()
     app.debug = True
-    app.run() 
+    app.run()
